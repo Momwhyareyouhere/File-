@@ -14,7 +14,7 @@ chmod +x executecommands.sh
 
 # THIS PROJECT DELETES ALL YOU SHORTCUTS
 
-# DELETE
+# DELETE SHORTCUT (BUT IT DOESNT REMOVE THE FILES)
 ```
 cd File-Explorer
 python3 delete.py
