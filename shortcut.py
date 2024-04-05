@@ -1,21 +1,21 @@
 import os
 import subprocess
 
-def delete_shortcuts():
+def delete_file_explorer_shortcut():
     # Determine the directory containing the shortcuts
     desktop_dir = os.path.expanduser('~/.local/share/applications/')
 
-    # List all files in the directory
-    files = os.listdir(desktop_dir)
+    # Determine the path for the File Explorer shortcut
+    shortcut_file = os.path.join(desktop_dir, "FileExplorer.desktop")
 
-    # Iterate through each file
-    for file_name in files:
-        # Check if it's a file and ends with '.desktop'
-        if os.path.isfile(os.path.join(desktop_dir, file_name)) and file_name.endswith('.desktop'):
-            # Delete the file
-            os.remove(os.path.join(desktop_dir, file_name))
-            print(f"Shortcut '{file_name}' deleted successfully!")
-
+    # Check if the File Explorer shortcut exists
+    if os.path.exists(shortcut_file):
+        # Delete the shortcut file
+        os.remove(shortcut_file)
+        print("File Explorer shortcut deleted successfully!")
+    else:
+        print("File Explorer shortcut does not exist.")
+        
 def create_file_explorer_shortcut(script_path):
     # Construct the contents of the .desktop file for File Explorer
     shortcut_content = f"""[Desktop Entry]
