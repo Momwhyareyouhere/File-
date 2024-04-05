@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 def delete_file_explorer_shortcut():
     # Determine the directory containing the shortcuts
@@ -15,7 +14,7 @@ def delete_file_explorer_shortcut():
         print("File Explorer shortcut deleted successfully!")
     else:
         print("File Explorer shortcut does not exist.")
-        
+
 def create_file_explorer_shortcut(script_path):
     # Construct the contents of the .desktop file for File Explorer
     shortcut_content = f"""[Desktop Entry]
@@ -28,6 +27,8 @@ Icon=system-file-manager
 
     # Determine the path for the shortcut file
     desktop_dir = os.path.expanduser('~/.local/share/applications/')
+    # Ensure the directory exists
+    os.makedirs(desktop_dir, exist_ok=True)
     shortcut_file = os.path.join(desktop_dir, "FileExplorer.desktop")
 
     # Write the contents to the shortcut file
@@ -44,8 +45,8 @@ if __name__ == "__main__":
     # Construct the path to the Python script (assuming it's named 'file.py' in the same directory)
     script_path = os.path.join(script_directory, 'file.py')
 
-    # Delete existing shortcuts
-    delete_shortcuts()
+    # Delete existing File Explorer shortcut
+    delete_file_explorer_shortcut()
 
     # Create File Explorer shortcut
     create_file_explorer_shortcut(script_path)
