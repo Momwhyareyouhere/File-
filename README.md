@@ -12,7 +12,6 @@ chmod +x executecommands.sh
 ./executecommands.sh
 ```
 
-# THIS PROJECT DELETES ALL YOU SHORTCUTS
 
 # DELETE SHORTCUT (BUT IT DOESNT REMOVE THE FILES)
 ```
