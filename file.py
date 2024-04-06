@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog, filedialog
 import shutil
+import subprocess
 
 class FileExplorerApp:
     def __init__(self, root):
@@ -30,7 +31,7 @@ class FileExplorerApp:
         self.current_directory = os.getcwd()
         self.listbox = tk.Listbox(self.root, selectmode=tk.SINGLE)
         self.listbox.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
-        self.listbox.bind("<Double-Button-1>", self.open_file)
+        self.listbox.bind("<Double-Button-1>", self.open_item)  # Double-click event
         self.listbox.bind("<Button-3>", self.show_context_menu)  # Bind right-click event
         
         btn_frame = tk.Frame(self.root)
@@ -41,7 +42,6 @@ class FileExplorerApp:
         ttk.Button(btn_frame, text="Fullscreen", command=self.toggle_fullscreen).pack(side=tk.LEFT, padx=5)
         ttk.Button(btn_frame, text="Delete", command=self.delete_file).pack(side=tk.LEFT, padx=5)
         ttk.Button(btn_frame, text="Rename", command=self.rename_file).pack(side=tk.LEFT, padx=5)
-        ttk.Button(btn_frame, text="Edit", command=self.edit_file).pack(side=tk.LEFT, padx=5)
         
         # Create the arrow label
         self.arrow_label = tk.Label(self.root, text="←", font=("Arial", 16))
@@ -117,13 +117,13 @@ class FileExplorerApp:
             os.makedirs(os.path.join(self.current_directory, foldername))
             self.refresh_list()
     
-    def edit_file(self):
-        selected_index = self.listbox.curselection()
-        if selected_index:
-            filename = self.listbox.get(selected_index[0])
-            filename = filename.split(" ", 1)[1]  # Remove emoji from filename
+    def edit_file(self, filename):
+        try:
+            subprocess.run(["code", "--version"], check=True, stdout=subprocess.DEVNULL)
+            subprocess.run(["code", filename])
+        except FileNotFoundError:
             self.open_text_editor(filename)
-                
+
     def open_text_editor(self, filename):
         text_editor_window = tk.Toplevel(self.root)
         text_editor_window.title(f"Text Editor - {filename}")
@@ -145,21 +145,18 @@ class FileExplorerApp:
         messagebox.showinfo("Save", "File saved successfully.")
         window.destroy()  # Close the text editor window after saving
 
-    def open_file(self, event):
+    def open_item(self, event):
         selected_index = self.listbox.curselection()
         if selected_index:
-            filename = self.listbox.get(selected_index[0])
-            filename = filename.split(" ", 1)[1]  # Remove emoji from filename
-            if event.widget == self.listbox:  # Ensure event source is the listbox
-                full_path = os.path.join(self.current_directory, filename)
-                if os.path.isdir(full_path):
-                    # If the selected item is a directory, change the current directory to it and refresh the list
-                    self.current_directory = full_path
-                    self.refresh_list()
-                else:
-                    # If it's a file, open it in the text editor
-                    self.open_text_editor(filename)
-    
+            item = self.listbox.get(selected_index[0])
+            item_name = item.split(" ", 1)[1]  # Remove emoji from item name
+            full_path = os.path.join(self.current_directory, item_name)
+            if "📁" in item:  # If it's a folder
+                self.current_directory = full_path
+                self.refresh_list()
+            else:  # If it's a file
+                self.edit_file(item_name)  # Open file in text editor or Visual Studio Code
+
     def go_back(self, event=None):
         # Go back to the parent directory
         self.current_directory = os.path.dirname(self.current_directory)
@@ -178,14 +175,14 @@ class FileExplorerApp:
         
         selected_index = self.listbox.nearest(event.y)
         if selected_index:
-            filename = self.listbox.get(selected_index)
-            if "📄" in filename:  # File
+            item = self.listbox.get(selected_index)
+            if "📄" in item:  # File
                 menu.add_command(label="Copy", command=self.copy_file)
                 menu.add_command(label="Rename", command=self.rename_file)
-                menu.add_command(label="Edit", command=self.edit_file)
+                menu.add_command(label="Edit", command=lambda: self.edit_file(item.split(" ", 1)[1]))
                 menu.add_command(label="Delete", command=self.delete_file)
-            elif "📁" in filename:  # Folder
-                menu.add_command(label="Look Inside", command=lambda: self.look_inside(filename))
+            elif "📁" in item:  # Folder
+                menu.add_command(label="Look Inside", command=lambda: self.look_inside(item))
         
         menu.post(event.x_root, event.y_root)
         self.context_menu = menu  # Store reference to the context menu
