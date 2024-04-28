@@ -3,6 +3,7 @@
 # INSTALLATION
 
 ```
+cd
 sudo apt update
 sudo apt upgrade
 sudo apt install git
@@ -16,6 +17,7 @@ chmod +x executecommands.sh
 
 # DELETE SHORTCUT (BUT IT DOESNT REMOVE THE FILES)
 ```
+cd
 cd File-Explorer
 python3 delete.py
 ```
