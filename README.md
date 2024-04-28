@@ -15,9 +15,20 @@ chmod +x executecommands.sh
 ```
 
 
-# DELETE SHORTCUT (BUT IT DOESNT REMOVE THE FILES)
+# DELETE SHORTCUT AND FILES
 ```
 cd
 cd File-Explorer
 python3 delete.py
+cd
+sudo rm -rf File-Explorer
+```
+
+# DELETE VENV (OPTIONAL)
+
+```
+cd
+deactivate
+sudo rm -rf venv
+sudo apt remove python3.11-venv
 ```
