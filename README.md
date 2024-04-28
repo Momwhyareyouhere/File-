@@ -24,11 +24,3 @@ cd
 sudo rm -rf File-Explorer
 ```
 
-# DELETE VENV (OPTIONAL)
-
-```
-cd
-deactivate
-sudo rm -rf venv
-sudo apt remove python3.11-venv
-```
