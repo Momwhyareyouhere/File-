@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog, filedialog
 import shutil
 import subprocess
+import webview
 
 class FileExplorerApp:
     def __init__(self, root):
@@ -128,23 +129,22 @@ class FileExplorerApp:
         text_editor_window = tk.Toplevel(self.root)
         text_editor_window.title(f"Text Editor - {filename}")
         
-        text_editor = tk.Text(text_editor_window, wrap=tk.WORD)
-        text_editor.pack(expand=True, fill=tk.BOTH)
+        # Use webview to display CodeMirror editor
+        webview.create_window("Text Editor", html=f"<textarea id='editor'></textarea>", width=800, height=600)
+        webview.start()
         
         with open(os.path.join(self.current_directory, filename), "r") as file:
             content = file.read()
-            text_editor.insert(tk.END, content)
+            webview.evaluate_js(f"document.getElementById('editor').value = {content!r}")
         
-        save_button = ttk.Button(text_editor_window, text="Save", command=lambda: self.save_file(text_editor, filename, text_editor_window))
-        save_button.pack(side=tk.BOTTOM)
+        def save_callback(editor_content):
+            with open(os.path.join(self.current_directory, filename), "w") as file:
+                file.write(editor_content)
+            messagebox.showinfo("Save", "File saved successfully.")
+            text_editor_window.destroy()  # Close the text editor window after saving
         
-    def save_file(self, text_editor, filename, window):
-        content = text_editor.get("1.0", tk.END)
-        with open(os.path.join(self.current_directory, filename), "w") as file:
-            file.write(content)
-        messagebox.showinfo("Save", "File saved successfully.")
-        window.destroy()  # Close the text editor window after saving
-
+        webview.expose(save_callback, "save_callback")
+        
     def open_item(self, event):
         selected_index = self.listbox.curselection()
         if selected_index:
