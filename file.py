@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog, filedialog
 import shutil
 import subprocess
-import webview
 
 class FileExplorerApp:
     def __init__(self, root):
