@@ -1,26 +1,4 @@
 # FILE EXPLORER FOR LINUX
 
-# INSTALLATION
 
-```
-cd
-sudo apt update
-sudo apt upgrade
-sudo apt install git
-sudo apt install python3
-sudo apt-get install python3-tk
-wget https://github.com/Momwhyareyouhere/File-Explorer/releases/download/download/executecommands.sh
-chmod +x executecommands.sh
-./executecommands.sh
-```
-
-
-# DELETE SHORTCUT AND FILES
-```
-cd
-cd File-Explorer
-python3 delete.py
-cd
-sudo rm -rf File-Explorer
-```
-
+Theres now a .deb file for this script Click [here](<https://github.com/Momwhyareyouhere/File-Explorer/releases/download/download/file-explorer.deb>) to download it
