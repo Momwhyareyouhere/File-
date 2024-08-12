@@ -16,5 +16,12 @@ sudo apt install file-explorer
 
 To delete sudo command run:
 ```
-
+wget https://github.com/Momwhyareyouhere/File-Explorer/releases/download/delete/delete.sh
+chmod +x delete.sh
+./delete.sh
+```
+after that just run :
+```
+sudo apt remove file-explorer
+```
 
