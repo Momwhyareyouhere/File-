@@ -8,31 +8,25 @@ class FileExplorerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("File Explorer")
-        self.root.geometry("800x600")  # Set initial window size
-        self.root.resizable(True, True)  # Allow resizing both horizontally and vertically
+        self.root.geometry("800x600")
+        self.root.resizable(True, True)
         
-        # Create the intro label
         self.intro_label = tk.Label(root, text="Loading", font=("Arial", 24))
         self.intro_label.pack(pady=50)
         
-        # After 2 seconds, remove the intro label and start the app
         self.root.after(2000, self.start_app)
         
-        # Variable to hold the reference to the context menu
         self.context_menu = None
-        # Variable to hold the path of the file to be copied
         self.file_to_copy = None
     
     def start_app(self):
-        # Destroy the intro label
         self.intro_label.destroy()
         
-        # Create the main components of the app
         self.current_directory = os.getcwd()
         self.listbox = tk.Listbox(self.root, selectmode=tk.SINGLE)
         self.listbox.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
-        self.listbox.bind("<Double-Button-1>", self.open_item)  # Double-click event
-        self.listbox.bind("<Button-3>", self.show_context_menu)  # Bind right-click event
+        self.listbox.bind("<Double-Button-1>", self.open_item)
+        self.listbox.bind("<Button-3>", self.show_context_menu)
         
         btn_frame = tk.Frame(self.root)
         btn_frame.pack(pady=5)
@@ -43,9 +37,8 @@ class FileExplorerApp:
         ttk.Button(btn_frame, text="Delete", command=self.delete_file).pack(side=tk.LEFT, padx=5)
         ttk.Button(btn_frame, text="Rename", command=self.rename_file).pack(side=tk.LEFT, padx=5)
         
-        # Create the arrow label
         self.arrow_label = tk.Label(self.root, text="←", font=("Arial", 16))
-        self.arrow_label.place(relx=0.98, rely=0.02, anchor="ne")  # Adjusted position
+        self.arrow_label.place(relx=0.98, rely=0.02, anchor="ne")
         self.arrow_label.bind("<Button-1>", self.go_back)
         
         menubar = tk.Menu(self.root)
@@ -54,7 +47,6 @@ class FileExplorerApp:
         settings_menu.add_command(label="Resize Window", command=self.resize_window)
         menubar.add_cascade(label="Settings", menu=settings_menu)
         
-        # Automatically refresh file list on startup
         self.refresh_list()
         
     def toggle_fullscreen(self):
@@ -74,15 +66,15 @@ class FileExplorerApp:
         files = os.listdir(self.current_directory)
         for file in files:
             if os.path.isdir(os.path.join(self.current_directory, file)):
-                self.listbox.insert(tk.END, "📁 " + file)  # Folder emoji
+                self.listbox.insert(tk.END, "📁 " + file)
             else:
-                self.listbox.insert(tk.END, "📄 " + file)  # File emoji
+                self.listbox.insert(tk.END, "📄 " + file)
             
     def delete_file(self):
         selected_index = self.listbox.curselection()
         if selected_index:
             filename = self.listbox.get(selected_index[0])
-            filename = filename.split(" ", 1)[1]  # Remove emoji from filename
+            filename = filename.split(" ", 1)[1]
             full_path = os.path.join(self.current_directory, filename)
             if os.path.isdir(full_path):
                 confirmation = messagebox.askyesno("Delete Directory", f"Are you sure you want to delete the directory '{filename}'?")
@@ -98,7 +90,7 @@ class FileExplorerApp:
         selected_index = self.listbox.curselection()
         if selected_index:
             filename = self.listbox.get(selected_index[0])
-            filename = filename.split(" ", 1)[1]  # Remove emoji from filename
+            filename = filename.split(" ", 1)[1]
             new_name = simpledialog.askstring("Rename File", "Enter new name:", initialvalue=filename)
             if new_name:
                 os.rename(os.path.join(self.current_directory, filename), os.path.join(self.current_directory, new_name))
@@ -108,7 +100,7 @@ class FileExplorerApp:
         filename = simpledialog.askstring("Create File", "Enter file name:")
         if filename:
             with open(os.path.join(self.current_directory, filename), "w"):
-                pass  # Create an empty file
+                pass
             self.refresh_list()
     
     def create_folder(self):
@@ -128,7 +120,6 @@ class FileExplorerApp:
         text_editor_window = tk.Toplevel(self.root)
         text_editor_window.title(f"Text Editor - {filename}")
         
-        # Use webview to display CodeMirror editor
         webview.create_window("Text Editor", html=f"<textarea id='editor'></textarea>", width=800, height=600)
         webview.start()
         
@@ -140,7 +131,7 @@ class FileExplorerApp:
             with open(os.path.join(self.current_directory, filename), "w") as file:
                 file.write(editor_content)
             messagebox.showinfo("Save", "File saved successfully.")
-            text_editor_window.destroy()  # Close the text editor window after saving
+            text_editor_window.destroy()
         
         webview.expose(save_callback, "save_callback")
         
@@ -148,46 +139,45 @@ class FileExplorerApp:
         selected_index = self.listbox.curselection()
         if selected_index:
             item = self.listbox.get(selected_index[0])
-            item_name = item.split(" ", 1)[1]  # Remove emoji from item name
+            item_name = item.split(" ", 1)[1]
             full_path = os.path.join(self.current_directory, item_name)
-            if "📁" in item:  # If it's a folder
+            if "📁" in item:
                 self.current_directory = full_path
                 self.refresh_list()
-            else:  # If it's a file
-                self.edit_file(item_name)  # Open file in text editor or Visual Studio Code
+            else:
+                self.edit_file(item_name)
 
     def go_back(self, event=None):
-        # Go back to the parent directory
         self.current_directory = os.path.dirname(self.current_directory)
         self.refresh_list()
         
     def show_context_menu(self, event):
         if self.context_menu:
-            self.context_menu.destroy()  # Destroy existing context menu if any
+            self.context_menu.destroy()
         
         menu = tk.Menu(self.root, tearoff=0)
         menu.add_command(label="Refresh", command=self.refresh_list)
         menu.add_command(label="Go Back", command=self.go_back)
         menu.add_command(label="Create File", command=self.create_file)
         menu.add_command(label="Create Folder", command=self.create_folder)
-        menu.add_command(label="Paste", command=self.paste_file)  # Add Paste option
+        menu.add_command(label="Paste", command=self.paste_file)
         
         selected_index = self.listbox.nearest(event.y)
         if selected_index:
             item = self.listbox.get(selected_index)
-            if "📄" in item:  # File
+            if "📄" in item:
                 menu.add_command(label="Copy", command=self.copy_file)
                 menu.add_command(label="Rename", command=self.rename_file)
                 menu.add_command(label="Edit", command=lambda: self.edit_file(item.split(" ", 1)[1]))
                 menu.add_command(label="Delete", command=self.delete_file)
-            elif "📁" in item:  # Folder
+            elif "📁" in item:
                 menu.add_command(label="Look Inside", command=lambda: self.look_inside(item))
         
         menu.post(event.x_root, event.y_root)
-        self.context_menu = menu  # Store reference to the context menu
+        self.context_menu = menu
         
     def look_inside(self, foldername):
-        foldername = foldername.split(" ", 1)[1]  # Remove emoji from foldername
+        foldername = foldername.split(" ", 1)[1]
         self.current_directory = os.path.join(self.current_directory, foldername)
         self.refresh_list()
         
@@ -195,17 +185,17 @@ class FileExplorerApp:
         selected_index = self.listbox.curselection()
         if selected_index:
             self.file_to_copy = self.listbox.get(selected_index[0])
-            self.file_to_copy = self.file_to_copy.split(" ", 1)[1]  # Remove emoji from filename
+            self.file_to_copy = self.file_to_copy.split(" ", 1)[1]
     
     def paste_file(self):
         if self.file_to_copy:
             selected_index = self.listbox.curselection()
             if selected_index:
                 destination = self.listbox.get(selected_index[0])
-                destination = destination.split(" ", 1)[1]  # Remove emoji from destination
+                destination = destination.split(" ", 1)[1]
                 full_path_to_copy = os.path.join(self.current_directory, self.file_to_copy)
                 destination_path = os.path.join(self.current_directory, destination)
-                if full_path_to_copy != destination_path:  # Check if source and destination are different
+                if full_path_to_copy != destination_path:
                     if os.path.isfile(full_path_to_copy):
                         shutil.copy(full_path_to_copy, destination_path)
                 elif os.path.isdir(full_path_to_copy):
