@@ -14,3 +14,7 @@ after its done run:
 sudo apt install file-explorer
 ```
 
+To delete sudo command run:
+```
+
+
