@@ -5,9 +5,9 @@ Theres now a .deb file for this script Click [here](<https://github.com/Momwhyar
 
 if you dont want to do with .deb file you can use these commands:
 ```
-wget https://github.com/Momwhyareyouhere/File-Explorer/releases/download/sudo/sudomethod.sh
-chmod +x sudomethod.sh
-./sudomethod.sh
+wget https://github.com/Momwhyareyouhere/File-Explorer/releases/download/sudo/method.sh
+chmod +x method.sh
+./method.sh
 ```
 after its done run:
 ```
