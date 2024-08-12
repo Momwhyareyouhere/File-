@@ -14,7 +14,7 @@ after its done run:
 sudo apt install file-explorer
 ```
 
-To delete sudo command run:
+To delete it run:
 ```
 wget https://github.com/Momwhyareyouhere/File-Explorer/releases/download/delete/delete.sh
 chmod +x delete.sh
